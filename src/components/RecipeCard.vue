@@ -8,15 +8,12 @@
       ></v-progress-linear>
     </template>
 
-    <v-img
-      height="250"
-      src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
-    ></v-img>
+    <v-img height="250" :src="recipe.photo" :alt="recipe._id"></v-img>
 
-    <v-card-title>Cafe Badilico</v-card-title>
+    <v-card-title>{{ recipe.recipeTitle }}</v-card-title>
 
     <v-card-text>
-      <v-row align="center" class="mx-0">
+      <!-- <v-row align="center" class="mx-0">
         <v-rating
           :value="4.5"
           color="amber"
@@ -29,21 +26,20 @@
         <div class="grey--text ml-4">
           4.5 (413)
         </div>
-      </v-row>
+      </v-row> -->
 
       <div class="my-4 subtitle-1">
-        $ • Italian, Cafe
+        {{ recipe.nationality }}
       </div>
 
       <div>
-        Small plates, salads & sandwiches - an intimate setting with 12 indoor
-        seats plus patio seating.
+        {{ recipe.description }}
       </div>
     </v-card-text>
 
     <v-divider class="mx-4"></v-divider>
 
-    <v-card-title>Tonight's availability</v-card-title>
+    <v-card-title>{{ recipe.creator }}</v-card-title>
 
     <!-- <v-card-text>
       <v-chip-group
@@ -63,7 +59,7 @@
 
     <v-card-actions>
       <v-btn color="deep-purple lighten-2" text @click="reserve">
-        Reserve
+        View
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -72,6 +68,7 @@
 <script>
 export default {
   name: "RecipeCard",
+  props: ["recipe"],
   data: () => ({
     loading: false,
     selection: 1,

@@ -17,6 +17,8 @@
                       label="Recipe name"
                       :rules="rules.item"
                       required
+                      @input="$v.form.recipeTitle.$touch()"
+                      @blur="$v.form.recipeTitle.$touch()"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12">
@@ -87,7 +89,7 @@
                       label="Image"
                     ></v-file-input>
                   </v-col>
-
+                  <!-- Ingredient Tab -->
                   <v-col cols="11">
                     <v-text-field
                       v-model="queryI"
@@ -102,7 +104,31 @@
                       :value="ingredientCount"
                       color="#c23616"
                     >
+                      <v-icon
+                        @click="show.ingredient = !show.ingredient"
+                        medium
+                      >
+                        mdi-clipboard-list
+                      </v-icon>
                     </v-badge>
+
+                    <v-list v-show="show.ingredient" disabled>
+                      <v-list-item-group
+                        color="primary"
+                        v-model="form.ingredient"
+                      >
+                        <v-list-item
+                          v-for="(ingredient, i) in form.ingredient"
+                          :key="i"
+                        >
+                          <v-list-item-content>
+                            <v-list-item-title
+                              v-text="ingredient"
+                            ></v-list-item-title>
+                          </v-list-item-content>
+                        </v-list-item>
+                      </v-list-item-group>
+                    </v-list>
                   </v-col>
 
                   <v-col cols="1">
@@ -113,7 +139,8 @@
                       >mdi-plus</v-icon
                     >
                   </v-col>
-
+                  <!-- Ingredient Tab -->
+                  <!-- Procedure Tab -->
                   <v-col cols="11" sm="11">
                     <v-text-field
                       v-model="queryP"
@@ -126,7 +153,29 @@
                       :content="procedureCount"
                       :value="procedureCount"
                       color="#c23616"
-                    ></v-badge>
+                    >
+                      <v-icon @click="show.procedure = !show.procedure" medium>
+                        mdi-clipboard-list
+                      </v-icon>
+                    </v-badge>
+
+                    <v-list v-show="show.procedure" disabled>
+                      <v-list-item-group
+                        color="primary"
+                        v-model="form.procedure"
+                      >
+                        <v-list-item
+                          v-for="(procedure, i) in form.procedure"
+                          :key="i"
+                        >
+                          <v-list-item-content>
+                            <v-list-item-title
+                              v-text="procedure"
+                            ></v-list-item-title>
+                          </v-list-item-content>
+                        </v-list-item>
+                      </v-list-item-group>
+                    </v-list>
                   </v-col>
                   <v-col cols="1" sm="1">
                     <v-icon
@@ -136,17 +185,23 @@
                       >mdi-plus</v-icon
                     >
                   </v-col>
+                  <!-- Procedure Tab -->
                 </v-row>
               </v-container>
               <small>*indicates required field</small>
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="dialog = false">
-                Close
+              <v-btn color="blue darken-1" text @click="clear">
+                Cancel
               </v-btn>
-              <v-btn color="blue darken-1" text @click="dialog = false">
-                Save
+              <v-btn
+                color="blue darken-1"
+                text
+                :disabled="!formIsValid"
+                @click="dialog = false"
+              >
+                Publish
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -172,6 +227,7 @@
 </template>
 
 <script>
+import { validationMixin } from "vuelidate";
 const defaultForm = Object.freeze({
   recipeTitle: "",
   summary: "",
@@ -184,6 +240,7 @@ const defaultForm = Object.freeze({
   procedure: [],
 });
 export default {
+  mixins: [validationMixin],
   name: "AddActionButton",
   data: () => ({
     form: Object.assign({}, defaultForm),
@@ -191,7 +248,10 @@ export default {
     queryP: "",
     ingredientCount: 0,
     procedureCount: 0,
-    // country: "",
+    show: {
+      ingredient: false,
+      procedure: false,
+    },
     rules: {
       image: [
         (photo) =>
@@ -425,6 +485,18 @@ export default {
     formIsValidP() {
       return this.queryP;
     },
+    formIsValid() {
+      return (
+        this.form.recipeTitle &&
+        this.form.summary &&
+        +this.form.cookTime &&
+        +this.form.serving &&
+        +this.form.kcal &&
+        this.form.photo &&
+        this.form.ingredient &&
+        this.form.procedure
+      );
+    },
   },
   methods: {
     addIngredient() {
@@ -444,6 +516,18 @@ export default {
       //   this.procedureCount++;
       //   this.queryP = "";
       //   console.log(this.procedure);
+    },
+    clear() {
+      this.form.recipeTitle = "";
+      this.form.summary = "";
+      this.form.cookTime = "";
+      this.form.serving = "";
+      this.form.kcal = "";
+      this.form.photo = null;
+      this.form.ingredient = null;
+      this.form.procedure = null;
+      this.dialog = false;
+      this.$v.$reset();
     },
   },
 };

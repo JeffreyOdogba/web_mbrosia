@@ -260,6 +260,7 @@ export default {
       this.$v.$touch();
       console.log(this.username);
       this.$v.$reset();
+      this.email = "";
       this.username = "";
       this.password = "";
       this.eatery = "";
