@@ -1,51 +1,57 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable no-unused-vars */
 // import axios from "axios";
+
+import Axios from "axios";
+const API_URL = "http://35.182.246.245/api";
 
 const state = {
   recipes: [
     {
-      _id: "23jdhfddksjksdfe3323d",
-      recipeTitle: "Cafe Badilico",
-      description:
-        "Small plates, salads & sandwiches - an intimate setting with 12 indoor seats plus patio seating.",
-      cookTime: 20,
-      serving: 4,
-      kcal: 120,
-      country: "Italian",
-      photo: "https://cdn.vuetifyjs.com/images/cards/cooking.png",
-      ingredients: [
-        "1/2 red onion, quartered, divided",
-        "1/2 red bird's eye chile pepper, chopped",
-        "1/4 cup water, divided",
-        "2 tablespoons raw cashews",
-        "1 clove garlic",
-        "1/2 (1 inch) piece fresh ginger",
-        "2-1/2 whole cloves",
-        "1/2 black cardamom pod",
-        "1/2 black cardamom pod",
-        "1/2 bay leaf",
-        "1/2 teaspoon cumin seeds",
-        "1/8 teaspoon whole black peppercorns",
-        "1/8 teaspoon ground coriander",
-        "1/8 inch cinnamon stick",
-        "2 tablespoons light vegetable oil",
-        "1/4 pound cauliflower, cut into large pieces",
-        "2-1/2 ounces broccoli, cut into large pieces",
-      ],
-      procedures: [
-        "Blend 1/4 of the onion, green chile pepper, 1/4 cup water, cashews, garlic, tomato paste, and ginger together in an electric blender, adding extra water if necessary, until paste is creamy and has the consistency of a pesto. Set aside.",
-        "Combine cloves, green and black cardamom pods, bay leaf, cumin seeds, peppercorns, coriander, and cinnamon in a mortar. Smash using a pestle to break open spices slightly, 3 to 4 times. Thinly slice remaining onion quarters.",
-      ],
+      _id: "",
+      recipeTitle: "",
+      description: "",
+      cookTime: 0,
+      serving: 0,
+      kcal: 0,
+      country: "",
+      photo: "",
+      ingredients: [],
+      procedures: [],
     },
   ],
+  loading: false,
 };
 
 const getters = {
+  // eslint-disable-next-line prettier/prettier
   allRecipes: (state) => state.recipes,
 };
 
-const actions = {};
+const actions = {
+  async fetchRecipe({ commit }) {
+    const res = await Axios.get(`${API_URL}/recipe`);
 
-const mutations = {};
+    commit("setRecipes", res.data);
+  },
+
+  async addRecipe({ commit }, form) {
+    console.log(form);
+
+    const res = await Axios.post(`${API_URL}/addrecipe`, { form });
+
+    commit("createRecipe", res.data);
+  },
+};
+
+const mutations = {
+  setRecipes: (state, recipes) => {
+    state.recipes = recipes;
+  },
+  createRecipe: (state, recipes) => {
+    state.recipes.unshift(recipes);
+  },
+};
 
 export default {
   state,

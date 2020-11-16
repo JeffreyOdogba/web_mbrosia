@@ -2,7 +2,7 @@
   <div>
     <v-row>
       <v-dialog v-model="dialog" persistent max-width="610px">
-        <v-form>
+        <v-form @submit.prevent="onSubmit">
           <v-card>
             <v-card-title>
               <span class="headline">Create Recipe</span>
@@ -17,8 +17,6 @@
                       label="Recipe name"
                       :rules="rules.item"
                       required
-                      @input="$v.form.recipeTitle.$touch()"
-                      @blur="$v.form.recipeTitle.$touch()"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12">
@@ -41,6 +39,7 @@
                       color="purple darken-2"
                       label="Cooking Time"
                       :rules="rules.number"
+                      type="number"
                       required
                     ></v-text-field>
                   </v-col>
@@ -50,6 +49,7 @@
                       color="purple darken-2"
                       label="Servings"
                       :rules="rules.number"
+                      type="number"
                       required
                     ></v-text-field>
                   </v-col>
@@ -60,6 +60,7 @@
                       color="purple darken-2"
                       label="Kcal"
                       :rules="rules.number"
+                      type="number"
                       required
                     ></v-text-field>
                   </v-col>
@@ -199,7 +200,7 @@
                 color="blue darken-1"
                 text
                 :disabled="!formIsValid"
-                @click="dialog = false"
+                type="submit"
               >
                 Publish
               </v-btn>
@@ -227,18 +228,20 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import { validationMixin } from "vuelidate";
 const defaultForm = Object.freeze({
   recipeTitle: "",
   summary: "",
-  cookTime: "",
-  serving: "",
-  kcal: "",
+  cookTime: null,
+  serving: null,
+  kcal: null,
   country: "",
   photo: [],
   ingredient: [],
   procedure: [],
 });
+/* eslint-disable */
 export default {
   mixins: [validationMixin],
   name: "AddActionButton",
@@ -246,8 +249,8 @@ export default {
     form: Object.assign({}, defaultForm),
     queryI: "",
     queryP: "",
-    ingredientCount: 0,
-    procedureCount: 0,
+    ingredientCount: null,
+    procedureCount: null,
     show: {
       ingredient: false,
       procedure: false,
@@ -259,12 +262,10 @@ export default {
           photo.size < 5000000 ||
           "Image size should be less than 5 MB!",
       ],
-      item: [(val) => (val || "").length > 0 || "This field is required"],
+      item: [(val) => !!(val || "").length > 0 || "This field is required"],
       number: [
         (val) =>
-          +val ||
-          "".length > 0 ||
-          "This field is required and must be a number",
+          !!parseInt(val) || "This field is required and must be a number",
       ],
     },
     countries: [
@@ -489,45 +490,40 @@ export default {
       return (
         this.form.recipeTitle &&
         this.form.summary &&
-        +this.form.cookTime &&
-        +this.form.serving &&
-        +this.form.kcal &&
-        this.form.photo &&
-        this.form.ingredient &&
-        this.form.procedure
+        parseInt(this.form.cookTime) &&
+        parseInt(this.form.serving) &&
+        parseInt(this.form.kcal) &&
+        this.form.country &&
+        this.form.photo.length != 0 &&
+        this.form.ingredient.length != 0 &&
+        this.form.procedure.length != 0
       );
     },
   },
   methods: {
     addIngredient() {
       this.form.ingredient.push(this.queryI);
-      // this.ingredient.push(this.queryI);
       this.ingredientCount++;
       this.queryI = "";
-      console.log(this.form);
     },
     addProcedure() {
       this.form.procedure.push(this.queryP);
       this.procedureCount++;
       this.queryP = "";
-      console.log("obj", this.form);
-
-      //   this.procedure.push(this.queryP);
-      //   this.procedureCount++;
-      //   this.queryP = "";
-      //   console.log(this.procedure);
+    },
+    ...mapActions(["addRecipe"]),
+    onSubmit(e) {
+      this.addRecipe(this.form);
+      this.form = Object.assign({}, this.defaultForm);
+      this.ingredientCount = null;
+      this.procedureCount = null;
+      this.dialog = false;
     },
     clear() {
-      this.form.recipeTitle = "";
-      this.form.summary = "";
-      this.form.cookTime = "";
-      this.form.serving = "";
-      this.form.kcal = "";
-      this.form.photo = null;
-      this.form.ingredient = null;
-      this.form.procedure = null;
+      this.form.summary = Object.assign({}, this.defaultForm);
+      this.ingredientCount = null;
+      this.procedureCount = null;
       this.dialog = false;
-      this.$v.$reset();
     },
   },
 };

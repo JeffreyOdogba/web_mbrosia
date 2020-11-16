@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 <template>
   <v-container>
     <div class="container-card">
@@ -10,14 +11,20 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import RecipeCard from "../components/RecipeCard.vue";
 import AddActionButton from "../components/AddActionButton.vue";
 export default {
   name: "Dashboard",
   components: { RecipeCard, AddActionButton },
+  methods: {
+    ...mapActions(["fetchRecipe"]),
+  },
   computed: {
     ...mapGetters(["allRecipes"]),
+  },
+  created() {
+    this.fetchRecipe();
   },
 };
 </script>
