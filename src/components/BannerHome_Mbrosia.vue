@@ -1,5 +1,14 @@
 <template>
   <div id="container">
+    <v-snackbar v-model="snackbar" top :timeout="5000">
+      {{ msg }}
+
+      <!-- <template v-slot:action="{ attrs }">
+        <v-btn color="blue" text v-bind="attrs" @click="snackbar = false">
+          Close
+        </v-btn>
+      </template> -->
+    </v-snackbar>
     <div id="logo-frame">
       <v-img
         alt="Vuetify Logo"
@@ -12,19 +21,38 @@
     </div>
 
     <div id="button">
-      <SignInDialog btnName="Sign in as a Contributor." title="Contributor." />
-      <SignInDialog btnName="Sign in as an Eatery." title="Eatery." />
+      <LoginContributor
+        btnName="Sign in as a Contributor."
+        title="Contributor."
+        @msgNote="alert"
+      >
+      </LoginContributor>
+      <LoginEatery btnName="Sign in as an Eatery." title="Eatery." />
     </div>
   </div>
 </template>
 
 <script>
-import SignInDialog from "../components/SignInDialog.vue";
+/* eslint-disable prettier/prettier */
+import LoginContributor from "../components/LoginContributor.vue";
+import LoginEatery from "../components/LoginEatery.vue";
 export default {
   name: "BannerHome_Mbrosia",
   components: {
-    // eslint-disable-next-line
-    SignInDialog, // eslint-disable-next-line
+    LoginContributor,
+    LoginEatery,
+  },
+  computed: {},
+  data: () => ({
+    snackbar: false,
+    msg: "",
+  }),
+  methods: {
+    alert(value) {
+      console.log(value);
+      this.snackbar = true;
+      this.msg = value;
+    },
   },
 };
 </script>

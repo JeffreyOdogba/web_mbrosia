@@ -6,8 +6,8 @@
           {{ btnName }}
         </v-btn>
       </template>
-      <form @submit="loginInContributor">
-        <v-card>
+      <form @submit.prevent="loginInContributor">
+        <v-card :loading="loading">
           <v-card-title>
             <span class="headline">{{ title }}</span>
           </v-card-title>
@@ -17,23 +17,12 @@
                 <v-col cols="12">
                   <v-text-field
                     color="#c23616"
-                    v-if="title == 'Contributor.'"
                     v-model.trim="username"
                     :error-messages="usernameErrors"
                     label="Your Username*"
                     required
                     @input="$v.username.$touch()"
                     @blur="$v.username.$touch()"
-                  ></v-text-field>
-                  <v-text-field
-                    color="#c23616"
-                    v-else-if="title == 'Eatery.'"
-                    v-model.trim="eatery"
-                    :error-messages="eateryErrors"
-                    label="Eatery*"
-                    required
-                    @input="$v.eatery.$touch()"
-                    @blur="$v.eatery.$touch()"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12">
@@ -53,12 +42,20 @@
             <small>*indicates required field</small>
           </v-card-text>
           <v-card-actions>
-            <SignUpDialog :btnName="title" :title="title" />
+            <v-btn color="#c23616" href="/register_contributor" text dark>
+              Create a Contributor Account.
+            </v-btn>
+
             <v-spacer></v-spacer>
             <v-btn color="#c23616" text @click="dialog = false">
               Cancel
             </v-btn>
-            <v-btn color="#c23616" text @click="loginInContributor">
+            <v-btn
+              color="#c23616"
+              text
+              :disabled="!formIsValidContributor"
+              @click="loginInContributor"
+            >
               Log in
             </v-btn>
           </v-card-actions>
@@ -69,16 +66,15 @@
 </template>
 
 <script>
+/* eslint-disable */
+import { mapActions, mapGetters } from "vuex";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import validationMixins from "../mixins/validationMixins";
-import SignUpDialog from "./SignUpDialog";
 export default {
   mixins: [validationMixin, validationMixins],
-  name: "SignInDialog",
-  components: {
-    SignUpDialog,
-  },
+  name: "LoginContributor",
+  components: {},
   props: ["btnName", "title"],
   validations: {
     username: {
@@ -87,27 +83,46 @@ export default {
     password: {
       required,
     },
-    eatery: {
-      required,
-    },
   },
   data: () => ({
     username: "",
-    eatery: "",
     password: "",
     dialog: false,
+    loading: false,
+    msg: null,
   }),
-  computed: {},
+
+  computed: {
+    ...mapGetters(["getContributor"]),
+    formIsValidContributor() {
+      return this.username && this.password;
+    },
+  },
   methods: {
-    loginInContributor() {
-      this.$v.$touch();
-      console.log(this.username);
-      this.$v.$reset();
-      this.$router.push("/dashboard");
-      this.username = "";
-      this.password = "";
-      this.eatery = "";
-      this.dialog = false;
+    ...mapActions(["loginContributor"]),
+    loginInContributor(e) {
+      this.loading = true;
+
+      const form = {
+        username: this.username,
+        password: this.password,
+      };
+
+      this.loginContributor(form).then(() => {
+        if (this.getContributor.authorizationToken) {
+          this.loading = false;
+          this.$router.push("/dashboard");
+          this.$v.$touch();
+          this.$v.$reset();
+          this.username = "";
+          this.password = "";
+          this.dialog = false;
+        } else {
+          this.loading = false;
+          this.$emit("msgNote", this.getContributor.msg);
+          // this.$router.push("/");
+        }
+      });
     },
   },
 };

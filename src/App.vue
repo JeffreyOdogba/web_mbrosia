@@ -1,6 +1,9 @@
 <template>
   <v-app>
     <v-app-bar app color="#c23616" dark>
+      <v-snackbar v-model="snackbar" color="#c23616" top :timeout="5000">
+        {{ msg }}
+      </v-snackbar>
       <div class="d-flex align-center">
         <a href="/">
           <v-img
@@ -39,6 +42,7 @@
       <router-view>
         <Home />
         <Dashboard />
+        <ContributorSignup @msg="alert" />
       </router-view>
       <Footer />
     </v-main>
@@ -46,10 +50,12 @@
 </template>
 
 <script>
+/* eslint-disable */
 import Home from "./views/Home";
 import Dashboard from "./views/Dashboard";
+import ContributorSignup from "./views/contributor.signup";
 import Footer from "./components/Footer";
-
+import { EventBus } from "./utils/event-bus";
 export default {
   name: "App",
 
@@ -57,10 +63,23 @@ export default {
     Home,
     Footer,
     Dashboard,
+    ContributorSignup,
   },
 
   data: () => ({
-    //
+    snackbar: false,
+    msg: "",
   }),
+  methods: {
+    alert(value) {
+      this.snackbar = true;
+      this.msg = value;
+    },
+  },
+  mounted() {
+    EventBus.$on("msg", (payload) => {
+      this.alert(payload);
+    });
+  },
 };
 </script>

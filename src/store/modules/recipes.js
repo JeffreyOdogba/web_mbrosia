@@ -3,7 +3,9 @@
 // import axios from "axios";
 
 import Axios from "axios";
-const API_URL = "http://35.182.246.245/api";
+// const API_URL = "http://35.182.246.245/api";
+
+const API_URL = "http://10.0.0.7:5000/api";
 
 const state = {
   recipes: [
@@ -26,13 +28,24 @@ const state = {
 const getters = {
   // eslint-disable-next-line prettier/prettier
   allRecipes: (state) => state.recipes,
+  isLoading: (state) => state.loading,
 };
 
 const actions = {
   async fetchRecipe({ commit }) {
-    const res = await Axios.get(`${API_URL}/recipe`);
-
+    commit("making_request");
+    console.log(localStorage.getItem("token"));
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    };
+    const res = await Axios.get(`${API_URL}/contributor/recipe`, {
+      config,
+    });
     commit("setRecipes", res.data);
+    commit("request_completed");
   },
 
   async addRecipe({ commit }, form) {
@@ -45,6 +58,12 @@ const actions = {
 };
 
 const mutations = {
+  making_request(state) {
+    state.loading = true;
+  },
+  request_completed(state) {
+    state.loading = false;
+  },
   setRecipes: (state, recipes) => {
     state.recipes = recipes;
   },

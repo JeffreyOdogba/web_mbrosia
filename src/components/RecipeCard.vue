@@ -39,7 +39,11 @@
 
     <v-divider class="mx-4"></v-divider>
 
-    <v-card-title>{{ recipe.creator }}</v-card-title>
+    <v-card-title id="text-capitalize">{{
+      recipe.creator.fullname
+        ? recipe.creator.fullname
+        : recipe.creator.username
+    }}</v-card-title>
 
     <!-- <v-card-text>
       <v-chip-group
@@ -84,4 +88,8 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+#text-capitalize {
+  text-transform: capitalize;
+}
+</style>
