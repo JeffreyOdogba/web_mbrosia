@@ -70,7 +70,7 @@
 import { mapActions, mapGetters } from "vuex";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
-import validationMixins from "../mixins/validationMixins";
+import validationMixins from "../../mixins/validationMixins";
 export default {
   mixins: [validationMixin, validationMixins],
   name: "LoginContributor",

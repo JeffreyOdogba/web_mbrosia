@@ -10,14 +10,17 @@
       </template> -->
     </v-snackbar>
     <div id="logo-frame">
-      <v-img
-        alt="Vuetify Logo"
-        class="shrink mr-2 img"
-        contain
-        src="../assets/Mbrosai.png"
-        transition="scale-transition"
-        width="740"
-      />
+      <v-hover v-slot:default="{ hover }">
+        <v-img
+          :elevation="hover ? 24 : 6"
+          alt="Vuetify Logo"
+          class="shrink mr-2 img"
+          contain
+          src="../../assets/Mbrosai.png"
+          transition="scale-transition"
+          width="740"
+        />
+      </v-hover>
     </div>
 
     <div id="button">
@@ -27,20 +30,21 @@
         @msgNote="alert"
       >
       </LoginContributor>
-      <LoginEatery btnName="Sign in as an Eatery." title="Eatery." />
+      <!-- <LoginEatery btnName="Sign in as an Eatery." title="Eatery." /> -->
     </div>
   </div>
 </template>
 
 <script>
 /* eslint-disable prettier/prettier */
-import LoginContributor from "../components/LoginContributor.vue";
-import LoginEatery from "../components/LoginEatery.vue";
+/* eslint-disable no-unused-vars */
+import LoginContributor from "./LoginContributor.vue";
+// import LoginEatery from "../LoginEatery.vue";
 export default {
   name: "BannerHome_Mbrosia",
   components: {
     LoginContributor,
-    LoginEatery,
+    //  LoginEatery,
   },
   computed: {},
   data: () => ({
@@ -71,9 +75,8 @@ export default {
 #logo-frame {
   perspective: 1500px;
   .img {
-    transform: rotateX(13deg);
-    box-shadow: 2px 10px 30px rgb(165, 74, 74);
-    border-radius: 0.25em;
+    transform: rotateX(2deg);
+    border-radius: 2.25em;
     transition: 0.3s;
   }
   &:hover .img {

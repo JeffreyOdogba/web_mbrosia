@@ -62,8 +62,12 @@
     </v-card-text> -->
 
     <v-card-actions>
-      <v-btn color="deep-purple lighten-2" text @click="reserve">
-        View
+      <v-btn color="deep-purple lighten-2" text @click="view">
+        <!-- <router-link :to="'/recipe/' + recipe._id">View</router-link> -->
+        <router-link
+          :to="{ name: 'recipe', params: { id: recipe._id, recipe: recipe } }"
+          >View</router-link
+        >
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -79,7 +83,7 @@ export default {
   }),
 
   methods: {
-    reserve() {
+    view() {
       this.loading = true;
 
       setTimeout(() => (this.loading = false), 2000);

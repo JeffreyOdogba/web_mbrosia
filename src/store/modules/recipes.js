@@ -10,50 +10,65 @@ const API_URL = "http://10.0.0.7:5000/api";
 const state = {
   recipes: [
     {
-      _id: "",
-      recipeTitle: "",
-      description: "",
-      cookTime: 0,
-      serving: 0,
-      kcal: 0,
-      country: "",
-      photo: "",
-      ingredients: [],
-      procedures: [],
+      // _id: "",
+      // recipeTitle: "",
+      // description: "",
+      // cookTime: 0,
+      // serving: 0,
+      // kcal: 0,
+      // country: "",
+      // photo: "",
+      // ingredients: [],
+      // procedures: [],
     },
   ],
+
   loading: false,
+  msg: null,
 };
 
 const getters = {
   // eslint-disable-next-line prettier/prettier
   allRecipes: (state) => state.recipes,
   isLoading: (state) => state.loading,
+  msg: (state) => state.msg,
 };
 
 const actions = {
   async fetchRecipe({ commit }) {
     commit("making_request");
-    console.log(localStorage.getItem("token"));
+    // console.log("recipe fetch ", localStorage.getItem("token"));
+    const token = localStorage.getItem("token");
     const config = {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${token}`,
       },
     };
-    const res = await Axios.get(`${API_URL}/contributor/recipe`, {
-      config,
-    });
+    const res = await Axios.get(`${API_URL}/contributor/recipe`, config);
     commit("setRecipes", res.data);
     commit("request_completed");
   },
 
   async addRecipe({ commit }, form) {
-    console.log(form);
+    console.log("form for addR", form);
+    commit("making_request");
 
-    const res = await Axios.post(`${API_URL}/addrecipe`, { form });
-
-    commit("createRecipe", res.data);
+    const token = localStorage.getItem("token");
+    const config = {
+      headers: {
+        // Accept: "application/json",
+        // "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    await Axios.post(`${API_URL}/recipe/addrecipe`, form, config).then(
+      (res) => {
+        console.log(res.data);
+        commit("createRecipe", res.data);
+        commit("request_completed");
+      }
+    );
   },
 };
 
@@ -68,7 +83,8 @@ const mutations = {
     state.recipes = recipes;
   },
   createRecipe: (state, recipes) => {
-    state.recipes.unshift(recipes);
+    state.msg = recipes.msg;
+    state.recipes.unshift(recipes.recipes);
   },
 };
 

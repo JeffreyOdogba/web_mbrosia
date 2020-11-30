@@ -109,11 +109,11 @@
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import { mapActions, mapGetters } from "vuex";
-import validationMixins from "../mixins/validationMixins";
-import { EventBus } from "../utils/event-bus";
+import validationMixins from "../../mixins/validationMixins";
+import { EventBus } from "../../utils/event-bus";
 export default {
   mixins: [validationMixin, validationMixins],
-  name: "SignUp_Contributor",
+  name: "Signup_contributor",
   validations: {
     password: {
       required,
@@ -165,16 +165,15 @@ export default {
       };
 
       this.createContributor(form).then(() => {
-        // console.log("msg", msg);
         this.loading = false;
-        console.log("this.getMsg", this.getMsg.msg);
         EventBus.$emit("msg", this.getMsg.msg);
+        this.$router.push("/");
         this.$v.$touch();
-        // this.$v.$reset();
-        // this.username = ""
-        // this.password = "";
-        // this.email = "";
-        // this.date = "";
+        this.$v.$reset();
+        this.username = "";
+        this.password = "";
+        this.email = "";
+        this.date = "";
         // this.selectedEateryType = "";
       });
     },

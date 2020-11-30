@@ -7,7 +7,7 @@
 <script>
 // @ is an alias to /src
 
-import BannerHomeMbrosia from "@/components/BannerHome_Mbrosia.vue";
+import BannerHomeMbrosia from "../components/Contributor/BannerHome_Mbrosia.vue";
 
 export default {
   name: "Home",

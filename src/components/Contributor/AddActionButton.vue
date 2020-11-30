@@ -2,8 +2,8 @@
   <div>
     <v-row>
       <v-dialog v-model="dialog" persistent max-width="610px">
-        <v-form @submit.prevent="onSubmit">
-          <v-card>
+        <v-form @submit.prevent="onSubmit" enctype="multipart/form-data">
+          <v-card :loading="loading">
             <v-card-title>
               <span class="headline">Create Recipe</span>
             </v-card-title>
@@ -13,7 +13,7 @@
                   <v-col cols="12">
                     <v-text-field
                       v-model="form.recipeTitle"
-                      color="purple darken-2"
+                      color="#c23616"
                       label="Recipe name"
                       :rules="rules.item"
                       required
@@ -23,7 +23,7 @@
                     <v-textarea
                       v-model="form.summary"
                       :rules="rules.item"
-                      color="teal"
+                      color="#c23616"
                     >
                       <template v-slot:label>
                         <div>
@@ -36,7 +36,7 @@
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
                       v-model="form.cookTime"
-                      color="purple darken-2"
+                      color="#c23616"
                       label="Cooking Time"
                       :rules="rules.number"
                       type="number"
@@ -46,7 +46,7 @@
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
                       v-model="form.serving"
-                      color="purple darken-2"
+                      color="#c23616"
                       label="Servings"
                       :rules="rules.number"
                       type="number"
@@ -57,7 +57,7 @@
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
                       v-model="form.kcal"
-                      color="purple darken-2"
+                      color="#c23616"
                       label="Kcal"
                       :rules="rules.number"
                       type="number"
@@ -75,6 +75,7 @@
                       :items="countries"
                       label="Country"
                       placeholder="Select..."
+                      color="#c23616"
                       required
                     ></v-autocomplete>
                   </v-col>
@@ -87,6 +88,7 @@
                       accept="image/png, image/jpeg, image/bmp"
                       placeholder="Pick an Image"
                       prepend-icon="mdi-camera"
+                      color="#c23616"
                       label="Image"
                     ></v-file-input>
                   </v-col>
@@ -94,7 +96,7 @@
                   <v-col cols="11">
                     <v-text-field
                       v-model="queryI"
-                      color="purple darken-2"
+                      color="#c23616"
                       label="Ingredient"
                       required
                     >
@@ -145,7 +147,7 @@
                   <v-col cols="11" sm="11">
                     <v-text-field
                       v-model="queryP"
-                      color="purple darken-2"
+                      color="#c23616"
                       label="Procedure"
                       required
                     >
@@ -162,7 +164,7 @@
 
                     <v-list v-show="show.procedure" disabled>
                       <v-list-item-group
-                        color="primary"
+                        color="#c23616"
                         v-model="form.procedure"
                       >
                         <v-list-item
@@ -193,11 +195,11 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="clear">
+              <v-btn color="#c23616" text @click="clear">
                 Cancel
               </v-btn>
               <v-btn
-                color="blue darken-1"
+                color="#c23616"
                 text
                 :disabled="!formIsValid"
                 type="submit"
@@ -228,8 +230,9 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import { validationMixin } from "vuelidate";
+import { EventBus } from "../../utils/event-bus";
 const defaultForm = Object.freeze({
   recipeTitle: "",
   summary: "",
@@ -255,6 +258,7 @@ export default {
       ingredient: false,
       procedure: false,
     },
+    loading: false,
     rules: {
       image: [
         (photo) =>
@@ -480,6 +484,12 @@ export default {
     dialog: false,
   }),
   computed: {
+    ...mapGetters[
+      {
+        // isLoading: "isLoading",
+        allRecipes: "allRecipes",
+      }
+    ],
     formIsValidI() {
       return this.queryI;
     },
@@ -513,11 +523,27 @@ export default {
     },
     ...mapActions(["addRecipe"]),
     onSubmit(e) {
-      this.addRecipe(this.form);
-      this.form = Object.assign({}, this.defaultForm);
-      this.ingredientCount = null;
-      this.procedureCount = null;
-      this.dialog = false;
+      this.loading = true;
+      const fd = new FormData();
+
+      fd.append("recipeTitle", this.form.recipeTitle);
+      fd.append("summary", this.form.summary);
+      fd.append("cookTime", this.form.cookTime);
+      fd.append("serving", this.form.serving);
+      fd.append("kcal", this.form.kcal);
+      fd.append("country", this.form.country);
+      fd.append("ingredient", JSON.stringify(this.form.ingredient));
+      fd.append("procedure", JSON.stringify(this.form.procedure));
+      fd.append("photo", this.form.photo, this.form.photo.name);
+
+      this.addRecipe(fd).then(() => {
+        this.form = Object.assign({}, this.defaultForm);
+        this.ingredientCount = null;
+        this.procedureCount = null;
+        this.loading = false;
+        EventBus.$emit("msg", "Recipe added to you library!");
+        this.dialog = false;
+      });
     },
     clear() {
       this.form.summary = Object.assign({}, this.defaultForm);
