@@ -71,6 +71,7 @@ import { mapActions, mapGetters } from "vuex";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import validationMixins from "../../mixins/validationMixins";
+import { EventBus } from "../../utils/event-bus";
 export default {
   mixins: [validationMixin, validationMixins],
   name: "LoginContributor",
@@ -84,16 +85,21 @@ export default {
       required,
     },
   },
-  data: () => ({
-    username: "",
-    password: "",
-    dialog: false,
-    loading: false,
-    msg: null,
-  }),
+  data() {
+    return {
+      username: "",
+      password: "",
+      dialog: false,
+      msg: null,
+    };
+  },
 
   computed: {
-    ...mapGetters(["getContributor"]),
+    ...mapGetters({
+      getContributor: "getContributor",
+      loading: "loading",
+      getMsg: "getMsg",
+    }),
     formIsValidContributor() {
       return this.username && this.password;
     },
@@ -101,8 +107,6 @@ export default {
   methods: {
     ...mapActions(["loginContributor"]),
     loginInContributor(e) {
-      this.loading = true;
-
       const form = {
         username: this.username,
         password: this.password,
@@ -110,7 +114,6 @@ export default {
 
       this.loginContributor(form).then(() => {
         if (this.getContributor.authorizationToken) {
-          this.loading = false;
           this.$router.push("/dashboard");
           this.$v.$touch();
           this.$v.$reset();
@@ -118,12 +121,20 @@ export default {
           this.password = "";
           this.dialog = false;
         } else {
-          this.loading = false;
-          this.$emit("msgNote", this.getContributor.msg);
+          this.$emit("msgNote", this.getMsg);
           // this.$router.push("/");
         }
       });
     },
+  },
+  beforeRouteEnter(to, from, next) {
+    if (to.query.redirectFrom) {
+      next((vm) => {
+        this.$emit("msgNote", "You must be logged in!");
+      });
+    } else {
+      next();
+    }
   },
 };
 </script>

@@ -1,6 +1,12 @@
 <template>
   <div id="container">
-    <v-snackbar v-model="snackbar" top :timeout="5000">
+    <v-snackbar
+      v-model="snackbar"
+      transition="scroll-y-transition"
+      color="#c23616"
+      top
+      :timeout="4000"
+    >
       {{ msg }}
 
       <!-- <template v-slot:action="{ attrs }">

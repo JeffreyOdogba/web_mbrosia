@@ -55,24 +55,27 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn href="/recipe_videos" text v-if="loggedIn">
-        <span class="mr-1">Set</span>
-        <v-icon>mdi-video-box</v-icon>
-      </v-btn>
-      <v-btn href="/account" text v-if="loggedIn">
-        <span class="mr-1">You</span>
-        <v-icon>mdi-account</v-icon>
-      </v-btn>
-      <v-btn text v-if="loggedIn" @click="logOutBtn">
-        <span class="mr-1">Logout</span>
-        <v-icon>mdi-logout</v-icon>
-      </v-btn>
+      <div>
+        <v-btn v-if="loggedIn" href="/recipe_videos" text>
+          <span class="mr-1">Set</span>
+          <v-icon>mdi-video-box</v-icon>
+        </v-btn>
+        <v-btn v-if="loggedIn" href="/account" text>
+          <span class="mr-1">You</span>
+          <v-icon>mdi-account</v-icon>
+        </v-btn>
+        <v-btn v-if="loggedIn" text @click="logOutBtn">
+          <span class="mr-1">Logout</span>
+          <v-icon>mdi-logout</v-icon>
+        </v-btn>
+      </div>
     </v-app-bar>
 
     <v-main>
       <router-view>
         <Home />
         <Dashboard />
+        <LoginContributor />
         <Signup_contributor @msg="alert" />
         <Confirmation_contributor />
       </router-view>
@@ -86,6 +89,7 @@
 import Home from "./views/Home";
 import Dashboard from "./views/Contributor/Dashboard.vue";
 import Signup_contributor from "./views/Contributor/Signup.contributor.vue";
+import LoginContributor from "./components/Contributor/LoginContributor";
 import Confirmation_contributor from "./views/Contributor/Confirmation";
 import Footer from "./components/Footer";
 import { EventBus } from "./utils/event-bus";
@@ -96,23 +100,20 @@ export default {
     Home,
     Footer,
     Dashboard,
+    LoginContributor,
     Signup_contributor,
     Confirmation_contributor,
   },
-  data: () => ({
-    snackbar: false,
-    msg: "",
-    isLogged: false,
-  }),
-  computed: {
-    ...mapGetters({
-      token: "token",
-      getMsg: "getMsg",
-      loading: "loading",
-      loggedIn: "loggedIn",
-    }),
+  data() {
+    return {
+      snackbar: false,
+      msg: "",
+      isLogged: false,
+    };
   },
-
+  computed: {
+    ...mapGetters(["getMsg", "loading", "loggedIn"]),
+  },
   created() {},
   methods: {
     ...mapActions({
@@ -131,7 +132,6 @@ export default {
       });
     },
   },
-
   mounted() {
     EventBus.$on("msg", (payload) => {
       this.alert(payload);

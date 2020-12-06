@@ -28,7 +28,11 @@
     </div>
 
     <div class="d-flex justify-center ">
-      <v-btn v-if="video" color="#c23616" @click="dialog = true">
+      <v-btn
+        v-if="video && selected_file"
+        color="#c23616"
+        @click="dialog = true"
+      >
         Video details
       </v-btn>
     </div>
@@ -61,11 +65,11 @@
                   ></v-textarea>
                 </v-col>
               </v-row>
-              <v-btn class="mr-4" @click="dialog = false">
+              <v-btn class="mr-4" @click="close">
                 Cancel
               </v-btn>
 
-              <v-btn @click="upload" color="#c23616">
+              <v-btn @click="upload_click" color="#c23616">
                 Upload
               </v-btn>
             </v-container>
@@ -93,7 +97,7 @@
       </v-col>
     </v-row>
 
-    <div v-for="video_set in video_set" :key="video_set._id">
+    <div class="my-7" v-for="video_set in video_set" :key="video_set._id">
       <VideoSetCard :video_set="video_set" />
     </div>
   </v-container>
@@ -138,7 +142,11 @@ export default {
       console.log(e);
       this.selected_file = URL.createObjectURL(e);
     },
-    upload(e) {
+    close() {
+      this.dialog = false;
+      this.selected_file = null;
+    },
+    upload_click(e) {
       e.preventDefault();
       this.loading = true;
 

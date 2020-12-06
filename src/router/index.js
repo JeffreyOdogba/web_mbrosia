@@ -22,7 +22,20 @@ const routes = [
     path: "/dashboard",
     name: "dashboard",
     component: Dashboard,
-    // meta: { requiresAuth: true },
+    beforeEnter: (to, from, next) => {
+      const token = localStorage.getItem("token");
+      // console.log("token", token);
+      if (!token) {
+        next({
+          path: "/",
+          query: {
+            redirectFrom: to.fullPath,
+          },
+        });
+      } else {
+        next();
+      }
+    },
   },
   {
     path: "/register_contributor",
@@ -39,16 +52,55 @@ const routes = [
     name: "recipe",
     component: Recipe_Item,
     props: true,
+    beforeEnter: (to, from, next) => {
+      const token = localStorage.getItem("token");
+      // console.log("token", token);
+      if (!token) {
+        next({
+          path: "/",
+          query: {
+            redirectFrom: to.fullPath,
+          },
+        });
+      } else {
+        next();
+      }
+    },
   },
   {
     path: "/recipe_videos",
     name: "recipe_videos",
     component: Recipe_Video,
+    beforeEnter: (to, from, next) => {
+      const token = localStorage.getItem("token");
+      // console.log("token", token);
+      if (!token) {
+        next({
+          path: "/",
+          query: {
+            redirectFrom: to.fullPath,
+          },
+        });
+      } else {
+        next();
+      }
+    },
   },
   {
     path: "/account",
     name: "account",
     component: Account,
+    beforeEnter: (to, from, next) => {
+      const token = localStorage.getItem("token");
+      // console.log("token", token);
+      if (!token) {
+        next({
+          path: "/",
+        });
+      } else {
+        next();
+      }
+    },
   },
 ];
 
@@ -57,18 +109,5 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes,
 });
-
-// router.beforeEach((to, from, next) => {
-//   if (to.matched.some((record) => record.meta.requiresAuth)) {
-//     console.log("to,from,next");
-//     if (localStorage.getItem("token")) {
-//       next();
-//       return;
-//     }
-//     next("/");
-//   } else {
-//     next();
-//   }
-// });
 
 export default router;

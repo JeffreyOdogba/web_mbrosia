@@ -15,7 +15,9 @@ import ProfileAccount from "../../components/Contributor/ProfileAccount";
 export default {
   name: "Account",
   components: { ProfileAccount },
+
+  data: () => ({}),
 };
 </script>
 
-<style scoped></style>
+<style></style>

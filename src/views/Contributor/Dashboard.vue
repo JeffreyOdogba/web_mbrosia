@@ -58,7 +58,6 @@ export default {
   },
   created() {
     this.fetchRecipe();
-    console.log(this.allRecipes);
   },
 };
 </script>

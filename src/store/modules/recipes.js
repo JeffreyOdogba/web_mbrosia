@@ -37,38 +37,43 @@ const getters = {
 const actions = {
   async fetchRecipe({ commit }) {
     commit("making_request");
-    // console.log("recipe fetch ", localStorage.getItem("token"));
     const token = localStorage.getItem("token");
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    };
-    const res = await Axios.get(`${API_URL}/contributor/recipe`, config);
-    commit("setRecipes", res.data);
-    commit("request_completed");
+    if (token) {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const res = await Axios.get(`${API_URL}/contributor/recipe`, config);
+      commit("setRecipes", res.data);
+      commit("request_completed");
+    } else {
+      commit("unAuth_token", "Unauthorization to access this page!");
+    }
   },
 
   async addRecipe({ commit }, form) {
-    console.log("form for addR", form);
+    // console.log("form for addR", form);
     commit("making_request");
 
     const token = localStorage.getItem("token");
-    const config = {
-      headers: {
-        // Accept: "application/json",
-        // "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${token}`,
-      },
-    };
-    await Axios.post(`${API_URL}/recipe/addrecipe`, form, config).then(
-      (res) => {
-        console.log(res.data);
-        commit("createRecipe", res.data);
-        commit("request_completed");
-      }
-    );
+    if (token) {
+      const config = {
+        headers: {
+          // Accept: "application/json",
+          // "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      await Axios.post(`${API_URL}/recipe/addrecipe`, form, config).then(
+        (res) => {
+          // console.log(res.data);
+          commit("createRecipe", res.data);
+          commit("request_completed");
+        }
+      );
+    }
   },
 };
 
@@ -78,6 +83,9 @@ const mutations = {
   },
   request_completed(state) {
     state.loading = false;
+  },
+  unAuth_token(state, msg) {
+    state.msg = msg;
   },
   setRecipes: (state, recipes) => {
     state.recipes = recipes;
