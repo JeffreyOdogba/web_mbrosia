@@ -3,9 +3,8 @@
 // import axios from "axios";
 
 import Axios from "axios";
-// const API_URL = "http://35.182.246.245/api";
-
-const API_URL = "http://10.0.0.7:5000/api";
+// const API_URL = "http://10.88.111.14:5050/api";
+const API_URL = "http://10.0.0.7:5050/api";
 
 const state = {
   video_set: [
