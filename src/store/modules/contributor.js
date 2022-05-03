@@ -4,7 +4,7 @@
 
 import Axios from "axios";
 // const API_URL = "http://10.88.111.14:5050/api";
-const API_URL = "http://10.0.0.7:5050/api";
+const API_URL = "http://10.0.0.9:5050/api";
 // const API_URL = process.env.API_URL;
 
 const state = {
@@ -24,11 +24,13 @@ const state = {
   msg: null,
   token: localStorage.getItem("token"),
   isLog: false,
+  totalLikedRecipes: 0,
 };
 
 const getters = {
   // eslint-disable-next-line prettier/prettier
   getContributor: (state) => state.contributor,
+  getTotalLikedRecipes: (state) => state.totalLikedRecipes,
   getMsg: (state) => state.msg,
   loading: (state) => state.loading,
   loggedIn: (state) => state.token,
@@ -37,6 +39,19 @@ const getters = {
 
 const actions = {
   async fetchContributor({ commit }) {
+    commit("making_request");
+    const token = localStorage.getItem("token");
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const res = await Axios.get(`${API_URL}/contributor/contributor`, config);
+
+    commit("setContributor", res.data);
+  },
+
+  async getTotalLikedRecipe_Contributor({ commit }) {
     const token = localStorage.getItem("token");
 
     const config = {
@@ -44,8 +59,13 @@ const actions = {
         Authorization: `Bearer ${token}`,
       },
     };
-    const res = await Axios.get(`${API_URL}/contributor/contributor`, config);
-    commit("setContributor", res.data);
+    const res = await Axios.get(
+      `${API_URL}/contributor/getTotalLikedRecipe_Contributor`,
+      config
+    );
+
+    console.log(res.data, "Test");
+    commit("setTotalLikedRecipes", res.data);
   },
 
   async createContributor({ commit }, form) {
@@ -139,6 +159,9 @@ const mutations = {
   },
   setContributor: (state, contributor) => {
     state.contributor = contributor;
+  },
+  setTotalLikedRecipes: (state, totalLikedRecipes) => {
+    state.totalLikedRecipes = totalLikedRecipes;
   },
   createContributor: (state, msg) => {
     state.msg = msg;

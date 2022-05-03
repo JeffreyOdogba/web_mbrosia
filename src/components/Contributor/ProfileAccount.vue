@@ -48,9 +48,11 @@
     </div>
     <div class="px-3 my-auto">
       <v-row>
-        <span class="mx-2"><b>32,222</b> Views</span>
-        <span class="mx-2"><b>21,000</b> Likes</span>
-        <span class="mx-2"><b>591,000</b> Followers</span>
+        <!-- <span class="mx-2"><b>32,222</b> Views</span> -->
+        <span class="mx-2"
+          ><b>{{ totalLikedRecipes }}</b> Likes</span
+        >
+        <!-- <span class="mx-2"><b>591,000</b> Followers</span> -->
       </v-row>
     </div>
     <EditProfile
@@ -76,10 +78,12 @@ export default {
   computed: {
     ...mapGetters({
       contributor: "getContributor",
+      totalLikedRecipes: "getTotalLikedRecipes",
     }),
     formatDate() {
+      // console.log(this.contributor, "this.contributor");
       return (this.joinedDate = moment(this.contributor.createdAt).format(
-        "MMM YYYY"
+        "MMMM YYYY"
       ));
     },
   },
@@ -87,6 +91,7 @@ export default {
   methods: {
     ...mapActions({
       fetchContributor: "fetchContributor",
+      getTotalLikedRecipe_Contributor: "getTotalLikedRecipe_Contributor",
     }),
     close_click(value) {
       this.dialog = !this.dialog;
@@ -94,6 +99,7 @@ export default {
   },
   created() {
     this.fetchContributor();
+    this.getTotalLikedRecipe_Contributor();
   },
 };
 </script>

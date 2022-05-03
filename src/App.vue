@@ -16,20 +16,12 @@
             alt="Mbrosia Logo"
             class="shrink mr-2"
             contain
-            src="./assets/logo.png"
+            min-width="100"
+            src="./assets/logoName.png"
             transition="scale-transition"
-            width="40"
+            width="100"
           />
         </a>
-
-        <v-img
-          alt="Mbrosia Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="./assets/logoName.png"
-          width="100"
-        />
       </div>
       <div v-else class="d-flex align-center">
         <a href="/">
@@ -37,20 +29,12 @@
             alt="Mbrosia Logo"
             class="shrink mr-2"
             contain
-            src="./assets/logo.png"
+            src="./assets/logoName.png"
             transition="scale-transition"
-            width="40"
+            width="100"
+            min-width="100"
           />
         </a>
-
-        <v-img
-          alt="Mbrosia Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="./assets/logoName.png"
-          width="100"
-        />
       </div>
 
       <v-spacer></v-spacer>

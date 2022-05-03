@@ -4,7 +4,7 @@
 
 import Axios from "axios";
 // const API_URL = "http://10.88.111.14:5050/api";
-const API_URL = "http://10.0.0.7:5050/api";
+const API_URL = "http://10.0.0.9:5050/api";
 
 const state = {
   recipes: [
@@ -37,7 +37,7 @@ const actions = {
   async fetchRecipe({ commit }) {
     commit("making_request");
     const token = localStorage.getItem("token");
-    console.log(token);
+
     if (token) {
       const config = {
         headers: {
@@ -46,6 +46,7 @@ const actions = {
         },
       };
       const res = await Axios.get(`${API_URL}/contributor/recipe`, config);
+
       commit("setRecipes", res.data);
       commit("request_completed");
     } else {
