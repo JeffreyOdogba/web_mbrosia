@@ -64,7 +64,6 @@ const actions = {
       config
     );
 
-    console.log(res.data, "Test");
     commit("setTotalLikedRecipes", res.data);
   },
 
