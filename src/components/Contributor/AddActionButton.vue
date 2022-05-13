@@ -65,7 +65,7 @@
                     ></v-text-field>
                   </v-col>
 
-                  <v-col cols="12" sm="6" md="6">
+                  <v-col cols="12" sm="6" md="4">
                     <v-autocomplete
                       ref="form.country"
                       v-model="form.country"
@@ -80,7 +80,22 @@
                     ></v-autocomplete>
                   </v-col>
 
-                  <v-col cols="12" sm="6" md="6">
+                  <v-col cols="12" sm="6" md="4">
+                    <v-autocomplete
+                      ref="form.mealType"
+                      v-model="form.mealType"
+                      :rules="[
+                        () => !!form.mealType || 'This field is required',
+                      ]"
+                      :items="mealTypeOption"
+                      label="Meal Type"
+                      placeholder="Select..."
+                      color="#c23616"
+                      required
+                    ></v-autocomplete>
+                  </v-col>
+
+                  <v-col cols="12" sm="6" md="4">
                     <v-file-input
                       v-model="form.photo"
                       show-size
@@ -240,6 +255,7 @@ const defaultForm = Object.freeze({
   serving: null,
   kcal: null,
   country: "",
+  mealType: "",
   photo: [],
   ingredient: [],
   procedure: [],
@@ -272,6 +288,7 @@ export default {
           !!parseInt(val) || "This field is required and must be a number",
       ],
     },
+    mealTypeOption: ["Breakfast", "Lunch", "Dinner", "Snack"],
     countries: [
       "Afghanistan",
       "Albania",
@@ -530,6 +547,7 @@ export default {
       fd.append("summary", this.form.summary);
       fd.append("cookTime", this.form.cookTime);
       fd.append("serving", this.form.serving);
+      fd.append("mealType", this.form.mealType);
       fd.append("kcal", this.form.kcal);
       fd.append("country", this.form.country);
       fd.append("ingredient", JSON.stringify(this.form.ingredient));
