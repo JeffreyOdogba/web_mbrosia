@@ -19,14 +19,11 @@
           ></v-progress-linear>
         </v-col>
       </v-row>
-
-      <div
-        v-else-if="!isLoading"
-        v-for="recipe in allRecipes"
-        :key="recipe._id"
-      >
-        <RecipeCard :recipe="recipe" />
-      </div>
+      <v-row no-gutters v-else-if="!isLoading">
+        <v-col v-for="recipe in allRecipes" :key="recipe._id" cols="12" sm="4">
+          <RecipeCard :recipe="recipe" />
+        </v-col>
+      </v-row>
     </div>
     <div v-if="allRecipes.length <= 0" class="d-flex justify-center mb-6">
       <div class="pa-12">
@@ -64,9 +61,9 @@ export default {
 
 <style scoped>
 .container-card {
-  display: flex;
+  /* display: flex;
   flex-wrap: wrap;
   flex-direction: row;
-  justify-content: center;
+  justify-content: center; */
 }
 </style>
